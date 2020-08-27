@@ -1,18 +1,12 @@
 function statement (invoice, plays) {
   let totalAmount = 0;
-  let volumeCredits = 0;
+  let volumeCredits = calculateAllPlayCredits(invoice, plays);
   let result = `Statement for ${invoice.customer}\n`;
   const format = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 2,
   }).format;
-
-  for (let perf of invoice.performances) {
-    const play = plays[perf.playID]
-    // add volume credits
-    volumeCredits += calculateCredits(perf, play)
-  }
 
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
@@ -30,10 +24,18 @@ module.exports = {
   statement,
 }
 
-function calculateCredits(perf, play) {
+function calculateAllPlayCredits(invoice, plays) {
+  let volumeCredits = 0;
+  for (let perf of invoice.performances) {
+    const play = plays[perf.playID];
+    volumeCredits += calculateCreditsForOnePlay(perf, play);
+  }
+  return volumeCredits;
+}
+
+function calculateCreditsForOnePlay(perf, play) {
   let volumeCredits = 0;
   volumeCredits += Math.max(perf.audience - 30, 0);
-  // add extra credit for every ten comedy attendees
   if ('comedy' === play.type)
     volumeCredits += Math.floor(perf.audience / 5);
   return volumeCredits;
