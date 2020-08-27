@@ -7,13 +7,16 @@ function statement (invoice, plays) {
     currency: 'USD',
     minimumFractionDigits: 2,
   }).format;
+
+  for (let perf of invoice.performances) {
+    const play = plays[perf.playID]
+    // add volume credits
+    volumeCredits += calculateCredits(perf, play)
+  }
+
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
     thisAmount = calculatePlayAmount(play, perf);
-    // add volume credits
-    volumeCredits += Math.max(perf.audience - 30, 0);
-    // add extra credit for every ten comedy attendees
-    if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
     //print line for this order
     result += ` ${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
     totalAmount += thisAmount;
@@ -25,6 +28,15 @@ function statement (invoice, plays) {
 
 module.exports = {
   statement,
+}
+
+function calculateCredits(perf, play) {
+  let volumeCredits = 0;
+  volumeCredits += Math.max(perf.audience - 30, 0);
+  // add extra credit for every ten comedy attendees
+  if ('comedy' === play.type)
+    volumeCredits += Math.floor(perf.audience / 5);
+  return volumeCredits;
 }
 
 function calculatePlayAmount(play, perf) {
