@@ -1,12 +1,12 @@
 
 
 function statement(invoice, plays) {
-  return renderText(gengrateStatementData(invoice, plays))
+  return renderText(generateStatementData(invoice, plays))
 }
 
 
 function htmlStatement(invoice, plays) {
-  return renderHtml(gengrateStatementData(invoice, plays))
+  return renderHtml(generateStatementData(invoice, plays))
 }
 
 function renderText(data) {
@@ -49,25 +49,28 @@ function generateNumberFormat() {
   }).format;
 }
 
-function gengrateStatementData(invoice, plays) {
+function generateStatementData(invoice, plays) {
   let totalAmount = calculateTotalAmount(invoice, plays);
   let volumeCredits = calculateAllPlayCredits(invoice, plays);
   let {customer} = invoice
-  let playsInfo = []
+  let playsInfo = generatePlaysInfo(invoice, plays);
   let result = { totalAmount, volumeCredits, playsInfo, customer }
 
+  return result
+}
 
+function generatePlaysInfo(invoice, plays) {
+  let playsInfo = []
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
-    let amount = calculateOnePlayAmount(play, perf)
-    result.playsInfo.push({
+    let amount = calculateOnePlayAmount(play, perf);
+    playsInfo.push({
       amount,
       playName: play.name,
       audience: perf.audience
-    })
+    });
   }
-
-  return result
+  return playsInfo
 }
 
 function calculateTotalAmount(invoice, plays) {
