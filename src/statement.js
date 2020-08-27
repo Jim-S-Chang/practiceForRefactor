@@ -1,6 +1,4 @@
 function statement (invoice, plays) {
-  let totalAmount = calculateTotalAmount(invoice, plays);
-  let volumeCredits = calculateAllPlayCredits(invoice, plays);
   let result = `Statement for ${invoice.customer}\n`;
   const format = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -8,20 +6,39 @@ function statement (invoice, plays) {
     minimumFractionDigits: 2,
   }).format;
 
-  for (let perf of invoice.performances) {
-    const play = plays[perf.playID];
-    thisAmount = calculatePlayAmount(play, perf);
-    //print line for this order
-    result += ` ${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
+  const data = gengrateStatementData(invoice, plays)
+  
+  for (let play of data.playsInfo) {
+    result += ` ${play.playName}: ${format(play.amount / 100)} (${play.audience} seats)\n`;
   }
-
-  result += `Amount owed is ${format(totalAmount / 100)}\n`;
-  result += `You earned ${volumeCredits} credits \n`;
+  
+  result += `Amount owed is ${format(data.totalAmount / 100)}\n`;
+  result += `You earned ${data.volumeCredits} credits \n`;
   return result;
 }
 
 module.exports = {
   statement,
+}
+
+function gengrateStatementData(invoice, plays) {
+  let totalAmount = calculateTotalAmount(invoice, plays);
+  let volumeCredits = calculateAllPlayCredits(invoice, plays);
+  let playsInfo = []
+  let result = {totalAmount, volumeCredits, playsInfo}
+
+
+  for (let perf of invoice.performances) {
+    const play = plays[perf.playID];
+    let amount = calculatePlayAmount(play, perf)
+    result.playsInfo.push({
+      amount,
+      playName: play.name,
+      audience: perf.audience
+    })
+  }
+
+  return result
 }
 
 function calculateTotalAmount(invoice, plays) {
