@@ -1,5 +1,5 @@
 function statement (invoice, plays) {
-  let totalAmount = 0;
+  let totalAmount = calculateTotalAmount(invoice, plays);
   let volumeCredits = calculateAllPlayCredits(invoice, plays);
   let result = `Statement for ${invoice.customer}\n`;
   const format = new Intl.NumberFormat('en-US', {
@@ -13,8 +13,8 @@ function statement (invoice, plays) {
     thisAmount = calculatePlayAmount(play, perf);
     //print line for this order
     result += ` ${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
-    totalAmount += thisAmount;
   }
+
   result += `Amount owed is ${format(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits \n`;
   return result;
@@ -22,6 +22,16 @@ function statement (invoice, plays) {
 
 module.exports = {
   statement,
+}
+
+function calculateTotalAmount(invoice, plays) {
+  let totalAmount = 0;
+  for (let perf of invoice.performances) {
+    const play = plays[perf.playID];
+    thisAmount = calculatePlayAmount(play, perf);
+    totalAmount += thisAmount;
+  }
+  return totalAmount;
 }
 
 function calculateAllPlayCredits(invoice, plays) {
