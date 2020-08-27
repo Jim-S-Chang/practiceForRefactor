@@ -11,7 +11,7 @@ function statement (invoice, plays) {
   for (let play of data.playsInfo) {
     result += ` ${play.playName}: ${format(play.amount / 100)} (${play.audience} seats)\n`;
   }
-  
+
   result += `Amount owed is ${format(data.totalAmount / 100)}\n`;
   result += `You earned ${data.volumeCredits} credits \n`;
   return result;
@@ -30,7 +30,7 @@ function gengrateStatementData(invoice, plays) {
 
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
-    let amount = calculatePlayAmount(play, perf)
+    let amount = calculateOnePlayAmount(play, perf)
     result.playsInfo.push({
       amount,
       playName: play.name,
@@ -45,7 +45,7 @@ function calculateTotalAmount(invoice, plays) {
   let totalAmount = 0;
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
-    thisAmount = calculatePlayAmount(play, perf);
+    thisAmount = calculateOnePlayAmount(play, perf);
     totalAmount += thisAmount;
   }
   return totalAmount;
@@ -68,7 +68,7 @@ function calculateCreditsForOnePlay(perf, play) {
   return volumeCredits;
 }
 
-function calculatePlayAmount(play, perf) {
+function calculateOnePlayAmount(play, perf) {
   let thisAmount = 0;
   switch (play.type) {
     case 'tragedy':
