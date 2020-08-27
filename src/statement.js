@@ -4,7 +4,7 @@ function statement(invoice, plays) {
   const data = gengrateStatementData(invoice, plays)
   
   const format = generateNumberFormat()
-  let result = `Statement for ${invoice.customer}\n`;
+  let result = `Statement for ${data.customer}\n`;
  
   for (let play of data.playsInfo) {
     result += ` ${play.playName}: ${format(play.amount / 100)} (${play.audience} seats)\n`;
@@ -30,8 +30,9 @@ function generateNumberFormat() {
 function gengrateStatementData(invoice, plays) {
   let totalAmount = calculateTotalAmount(invoice, plays);
   let volumeCredits = calculateAllPlayCredits(invoice, plays);
+  let {customer} = invoice
   let playsInfo = []
-  let result = { totalAmount, volumeCredits, playsInfo }
+  let result = { totalAmount, volumeCredits, playsInfo, customer }
 
 
   for (let perf of invoice.performances) {
