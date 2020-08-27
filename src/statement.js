@@ -15,8 +15,25 @@ function statement(invoice, plays) {
   return result;
 }
 
+function htmlStatement(invoice, plays) {
+  const data = gengrateStatementData(invoice, plays)
+  
+  const format = generateNumberFormat()
+  let result = `<h1>Statement for ${data.customer}</h1>\n`
+  result += `<table>\n<tr><th>play</th><th>seats</th><th>cost</th></tr>`;
+ 
+  for (let play of data.playsInfo) {
+    result += ` <tr><td>${play.playName}</td><td>${play.audience}</td><td>${format(play.amount / 100)}</td></tr>\n`;
+  }
+
+  result += `</table>\n<p>Amount owed is <em>${format(data.totalAmount / 100)}</em></p>\n`;
+  result += `<p>You earned <em>${data.volumeCredits}</em> credits</p>\n`;
+  return result;
+}
+
 module.exports = {
   statement,
+  htmlStatement
 }
 
 function generateNumberFormat() {
