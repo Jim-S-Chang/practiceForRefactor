@@ -1,13 +1,11 @@
-function statement (invoice, plays) {
-  let result = `Statement for ${invoice.customer}\n`;
-  const format = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-  }).format;
 
+
+function statement(invoice, plays) {
   const data = gengrateStatementData(invoice, plays)
   
+  const format = generateNumberFormat()
+  let result = `Statement for ${invoice.customer}\n`;
+ 
   for (let play of data.playsInfo) {
     result += ` ${play.playName}: ${format(play.amount / 100)} (${play.audience} seats)\n`;
   }
@@ -21,11 +19,19 @@ module.exports = {
   statement,
 }
 
+function generateNumberFormat() {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format;
+}
+
 function gengrateStatementData(invoice, plays) {
   let totalAmount = calculateTotalAmount(invoice, plays);
   let volumeCredits = calculateAllPlayCredits(invoice, plays);
   let playsInfo = []
-  let result = {totalAmount, volumeCredits, playsInfo}
+  let result = { totalAmount, volumeCredits, playsInfo }
 
 
   for (let perf of invoice.performances) {
