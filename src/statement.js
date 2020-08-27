@@ -1,8 +1,15 @@
 
 
 function statement(invoice, plays) {
-  const data = gengrateStatementData(invoice, plays)
-  
+  return renderText(gengrateStatementData(invoice, plays))
+}
+
+
+function htmlStatement(invoice, plays) {
+  return renderHtml(gengrateStatementData(invoice, plays))
+}
+
+function renderText(data) {
   const format = generateNumberFormat()
   let result = `Statement for ${data.customer}\n`;
  
@@ -15,9 +22,7 @@ function statement(invoice, plays) {
   return result;
 }
 
-function htmlStatement(invoice, plays) {
-  const data = gengrateStatementData(invoice, plays)
-  
+function renderHtml(data) {
   const format = generateNumberFormat()
   let result = `<h1>Statement for ${data.customer}</h1>\n`
   result += `<table>\n<tr><th>play</th><th>seats</th><th>cost</th></tr>`;
