@@ -75,20 +75,13 @@ function generatePlaysInfo(invoice, plays) {
 
 function calculateTotalAmount(invoice, plays) {
   let totalAmount = 0;
-  for (let perf of invoice.performances) {
-    const play = plays[perf.playID];
-    thisAmount = calculateOnePlayAmount(play, perf);
-    totalAmount += thisAmount;
-  }
+  invoice.performances.forEach(perf => totalAmount += calculateOnePlayAmount(plays[perf.playID], perf))
   return totalAmount;
 }
 
 function calculateAllPlayCredits(invoice, plays) {
   let volumeCredits = 0;
-  for (let perf of invoice.performances) {
-    const play = plays[perf.playID];
-    volumeCredits += calculateCreditsForOnePlay(perf, play);
-  }
+  invoice.performances.forEach(perf => volumeCredits += calculateCreditsForOnePlay(perf, plays[perf.playID]))
   return volumeCredits;
 }
 
